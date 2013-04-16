@@ -1,7 +1,3 @@
-#|
-  This file is a part of promise-future project.
-|#
-
 (in-package :cl-user)
 (defpackage promise-future-asd
   (:use :cl :asdf))
@@ -11,7 +7,7 @@
   :version "0.1"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (:alexandria :thread-pool)
   :components ((:module "src"
                 :components
                 ((:file "promise-future"))))

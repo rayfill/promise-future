@@ -6,6 +6,7 @@
 (in-package :promise-future-test)
 
 (plan nil)
+
 (defun test1 (class)
   (let* ((promise (create-promise (lambda ()
 				    (values
@@ -23,17 +24,17 @@
       (ok (slot-value future 'promise-future::result) '(1 2 3 4))))
 
   (loop for i from 10 downto 0
-     do (let ((future (get-future (create-promise (lambda ()
-						    (/ 1 i)) class)))
-	      (raise-error nil))
-	  (let ((result (handler-case
-			    (get-value future)
-			  (division-by-zero () (setf raise-error t)))))
-	    (if (zerop i)
-		(is raise-error t)
-		(ok (and (null raise-error) (= result (/ 1 i)))))))))
+     do (let* ((future (get-future (create-promise (lambda ()
+						     (/ 1 i)) class)))
+	       (result (handler-case
+			   (get-value future)
+			 (division-by-zero (e) e))))
+	  (if (zerop i)
+	      (ok (typep result 'division-by-zero))
+	      (ok (= result (/ 1 i)))))))
 
 (test1 'promise)
 (test1 'threaded-promise)
+(test1 'thread-pool-promise)
 
 (finalize)
